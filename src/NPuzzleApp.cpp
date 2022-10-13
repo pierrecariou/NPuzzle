@@ -10,9 +10,9 @@
 
 int	main()
 {
-	NPuzzle puzzle("resources/taquin1.txt");
+	NPuzzle puzzle("resources/taquin2.txt");
 
-	puzzle.show();
+//	puzzle.show();
 
 	puzzle.solve();
 	return (0);

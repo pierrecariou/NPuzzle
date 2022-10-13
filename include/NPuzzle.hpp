@@ -31,18 +31,21 @@ class NPuzzle {
 		NPuzzle(std::string filename);
 		~NPuzzle();
 
-		void	show() const;
+	//	void	show() const;
 		void	solve();
 
 	private:
 		void	openFile(const std::string &filename);
 		void	appendLine(const std::string &line);
+		Node	*findLeastF();
+		void	fillGoal();
+		std::list<Node *>	fromCurrent(const Node &current);
 
 		// Attributes
 		Node *start;
 		Node *goal;
-		std::list<Node *> openList;
-		std::list<Node *> closedList;
+		std::list<Node *> openList; // Nodes that have been discovered, but not expored yet
+		std::list<Node *> closedList; // Nodes that have already been explored
 		int	size;
 };
 

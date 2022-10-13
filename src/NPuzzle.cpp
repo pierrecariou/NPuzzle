@@ -12,6 +12,7 @@ NPuzzle::NPuzzle(std::string filename)
 	: start(new Node()), goal(new Node())
 {
 	openFile(filename);
+	fillGoal();
 }
 
 NPuzzle::~NPuzzle()
@@ -47,6 +48,19 @@ void	NPuzzle::appendLine(const std::string &line)
 	start->grid.push_back(vec);
 }
 
+void	NPuzzle::fillGoal()
+{
+	int num = 1;
+	std::vector<int> vec;
+	for (int i = 0; i < size; i++) {
+		for (int k = 0; k < size; k++)
+			vec.push_back(num++);
+		goal->grid.push_back(vec);
+		vec.clear();
+	}
+}
+
+/*
 void	NPuzzle::show() const
 {
 	std::cout << std::endl;
@@ -70,10 +84,54 @@ void	NPuzzle::show() const
 	}
 	std::cout << std::endl;
 }
+*/
 
+// A* Algorithm //
 void	NPuzzle::solve()
 {
 	openList.push_back(start);
 	
 	start->manhattanDistance();
+	while (!openList.empty())
+	{
+		Node *current = findLeastF();
+		current->show();
+		openList.remove(current);
+		closedList.push_back(current);
+		std::list<Node *> nextNodes = fromCurrent(*current);
+
+		for (auto next : nextNodes) {
+			next->show();
+			if (next->comp(*goal))
+				return ;
+		}
+	}
+}
+
+Node	*NPuzzle::findLeastF()
+{
+	Node *found {openList.front()};
+
+	for (Node *elem : openList) {
+		if  (elem->f < found->f)
+			found = elem;
+	}
+	return found;
+}
+
+std::list<Node *>	NPuzzle::fromCurrent(const Node &current)
+{			
+	std::list<Node *> nodes;
+	Node *next;
+
+	if ((next = current.up()))
+		nodes.push_back(next);
+	if ((next = current.down()))
+		nodes.push_back(next);
+	if ((next = current.left()))
+		nodes.push_back(next);
+	if ((next = current.right()))
+		nodes.push_back(next);
+
+	return nodes;
 }
