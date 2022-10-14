@@ -58,6 +58,7 @@ void	NPuzzle::fillGoal()
 		goal->grid.push_back(vec);
 		vec.clear();
 	}
+	goal->grid[size - 1][size -1] = 0;
 }
 
 /*
@@ -87,38 +88,96 @@ void	NPuzzle::show() const
 */
 
 // A* Algorithm //
+/*
 void	NPuzzle::solve()
 {
+	Node *current;
+	Node *find_node;
+	closedList.push_back(start);
+	
+	start->manhattanDistance();
+	while ((current = closedList.back()) && current->h != 0)
+	{
+		current->show();
+		openList.remove(current);
+		std::list<Node *> nextNodes = fromCurrent(*current);
+
+		for (Node *next : nextNodes) {
+			if (next->exists(openList))
+				continue ;
+			next->manhattanDistance();
+			if (closedList.back()->g == next->g) {
+				if (closedList.back()->f <= next->f)
+					continue ;
+				else
+					closedList.pop_back();
+			}
+			closedList.push_back(next);
+		}
+		openList.splice(openList.begin(), nextNodes);
+	}
+	current->show();
+}
+*/
+
+void	NPuzzle::solve()
+{
+	//int i = 0;
+	Node *current = nullptr;
+	Node *find_node;
 	openList.push_back(start);
 	
 	start->manhattanDistance();
-	while (!openList.empty())
+	while ((current = findLeastF(current)) && current->h != 0 && !openList.empty())
 	{
-		Node *current = findLeastF();
 		current->show();
-		openList.remove(current);
-		closedList.push_back(current);
-		std::list<Node *> nextNodes = fromCurrent(*current);
+		openList.remove(current); // OPEN: States to be examined and candidates to expansion
+		closedList.push_back(current); // CLOSED: States already selected by the algorithm, compared to the solution, and expanded 
+		//std::list<Node *> nextNodes = fromCurrent(*current);
+		openList.splice(openList.begin(), fromCurrent(*current, openList, closedList));
 
-		for (auto next : nextNodes) {
-			next->show();
-			if (next->comp(*goal))
-				return ;
+
+/*
+		for (Node *next : nextNodes) {
+			if (next->exists(closedList))
+				continue ;
+			next->manhattanDistance();
+			if (closedList.back()->g == next->g) {
+				if (closedList.back()->f <= next->f)
+					continue ;
+				else
+					closedList.pop_back();
+			}
+			closedList.push_back(next);
 		}
+		*/
+	//	openList.splice(openList.begin(), nextNodes);
 	}
+	current->show();
 }
 
-Node	*NPuzzle::findLeastF()
+Node	*NPuzzle::findLeastF(Node *current)
 {
-	Node *found {openList.front()};
+	Node *found;
+	std::list<Node *>::iterator first;
 
-	for (Node *elem : openList) {
-		if  (elem->f < found->f)
-			found = elem;
+	if (current == nullptr)
+		return openList.back();
+	for (std::list<Node *>::iterator it=openList.begin(); it != openList.end(); it++) {
+		if ((*it)->g - current->g == 1) {
+			found = *it;
+			first = it;
+			break ;
+		}
+	}
+	for (std::list<Node *>::iterator it=first; it != openList.end(); it++) {
+		if  ((*it)->f < found->f && (*it)->g - current->g == 1) // Check the movement cost
+			found = *it;
 	}
 	return found;
 }
 
+/*
 std::list<Node *>	NPuzzle::fromCurrent(const Node &current)
 {			
 	std::list<Node *> nodes;
@@ -132,6 +191,60 @@ std::list<Node *>	NPuzzle::fromCurrent(const Node &current)
 		nodes.push_back(next);
 	if ((next = current.right()))
 		nodes.push_back(next);
+
+	return nodes;
+}
+*/
+
+std::list<Node *>	NPuzzle::fromCurrent(const Node &current, const std::list<Node *> &openList, const std::list<Node *> &closedList)
+{			
+	std::list<Node *> nodes;
+	Node *next;
+	Node *oldNext;
+
+	if ((next = current.up()) && !next->exists(closedList)) {
+		if (oldNext = next->exists(closedList, 1)) {
+			oldNext->g = next->g;
+			oldNext->f = next->f;
+		}
+		else {
+			nodes.push_back(next);
+			next->manhattanDistance();
+		}
+	}
+	if ((next = current.down()) && !next->exists(closedList)) {
+		if (oldNext = next->exists(closedList, 1)) {
+			oldNext->g = next->g;
+			oldNext->f = next->f;
+		}
+		else {
+			nodes.push_back(next);
+			next->manhattanDistance();
+		}
+
+	}
+	if ((next = current.left()) && !next->exists(closedList)) {
+		if (oldNext = next->exists(closedList, 1)) {
+			oldNext->g = next->g;
+			oldNext->f = next->f;
+		}
+		else {
+			nodes.push_back(next);
+			next->manhattanDistance();
+		}
+
+	}
+	if ((next = current.right()) && !next->exists(closedList)) {
+		if (oldNext = next->exists(closedList, 1)) {
+			oldNext->g = next->g;
+			oldNext->f = next->f;
+		}
+		else {
+			nodes.push_back(next);
+			next->manhattanDistance();
+		}
+
+	}
 
 	return nodes;
 }

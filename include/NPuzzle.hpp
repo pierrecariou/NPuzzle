@@ -37,14 +37,15 @@ class NPuzzle {
 	private:
 		void	openFile(const std::string &filename);
 		void	appendLine(const std::string &line);
-		Node	*findLeastF();
+		Node	*findLeastF(Node *current);
 		void	fillGoal();
-		std::list<Node *>	fromCurrent(const Node &current);
+	//	std::list<Node *>	fromCurrent(const Node &current);
+		std::list<Node *>	fromCurrent(const Node &current, const std::list<Node *> &openList, const std::list<Node *> &closedList);
 
 		// Attributes
 		Node *start;
 		Node *goal;
-		std::list<Node *> openList; // Nodes that have been discovered, but not expored yet
+		std::list<Node *> openList; // Nodes that have been discovered, but not explored yet
 		std::list<Node *> closedList; // Nodes that have already been explored
 		int	size;
 };

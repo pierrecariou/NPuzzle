@@ -10,7 +10,7 @@
 
 int	main()
 {
-	NPuzzle puzzle("resources/taquin2.txt");
+	NPuzzle puzzle("resources/t.txt");
 
 //	puzzle.show();
 

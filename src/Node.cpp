@@ -44,6 +44,13 @@ bool	Node::comp(const Node &obj) const
 	return true;
 }
 
+/*
+int		Node::cost(const Node &obj) const
+{
+	return ();
+}
+*/
+
 Node	*Node::up() const
 {
 	Node *up = new Node(*this);
@@ -132,19 +139,43 @@ Node	*Node::right() const
 	return right;
 }
 
+bool	Node::exists(const std::list<Node *> list) const
+{
+	for (Node *node : list) {
+		if (node->comp(*this))
+			return true;
+	}
+	return false;
+}
+
+Node	*Node::exists(const std::list<Node *> list, int flag) const
+{
+	for (Node *node : list) {
+		if (node->comp(*this))
+			return node;
+	}
+	return nullptr;
+}
+
+bool	Node::existsWithSmallerG(const std::list<Node *> list) const
+{
+	for (Node *node : list) {
+		if (node->comp(*this) && g < node->g)
+			return true;
+	}
+	return false;
+}
+
 void	Node::manhattanDistance()
 {
 	int x;
 	int y;
+	h = 0;
 	for (int i = 0; i < grid.size(); i++) {
 		for (int k = 0; k < grid.size(); k++) {
 			if (grid[i][k] != 0 && grid[i][k] != (k + 1 + (grid.size() * i))) { // tile is away from its goal state
-				//std::cout << grid[i][k]<< std::endl;
 				y = (grid[i][k] - 1) / grid.size(); // y goal
 				x = (grid[i][k] - 1 ) % grid.size(); // x goal
-				//std::cout << " y: " << y << " x: " << x << std::endl;
-				//std::cout << " i: " <<i << " k: " << k<<  std::endl;
-				//std::cout << " DIFF: "<< std::abs(y - i) + std::abs(x - k) << std::endl;;
 				h+=(std::abs(y - i) + std::abs(x - k));
 			}
 		}

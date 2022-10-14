@@ -2,6 +2,7 @@
 # define NODE_HPP
 
 #include <vector>
+#include <list>
 
 class Node
 {
@@ -20,6 +21,10 @@ class Node
 		Node	*right() const;
 
 		bool	comp(const Node &obj) const;
+		bool	exists(const std::list<Node *> list) const;
+		Node	*exists(const std::list<Node *> list, int flag) const;
+		bool	existsWithSmallerG(const std::list<Node *> list) const;
+//		int		cost(const Node &obj) const;
 
 		// Attributes
 		std::vector<std::vector<int>> grid;
