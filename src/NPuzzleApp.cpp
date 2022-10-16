@@ -7,13 +7,15 @@
  *************************************************************/
 
 #include "NPuzzle.hpp"
+#include "Gui.hpp"
 
 int	main()
 {
-	NPuzzle puzzle("resources/t.txt");
-
-//	puzzle.show();
-
+	NPuzzle puzzle("resources/taquin1.txt");
 	puzzle.solve();
+
+	Gui gui(puzzle);
+	gui.run();
+
 	return (0);
 }

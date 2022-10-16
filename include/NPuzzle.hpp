@@ -34,7 +34,9 @@ class NPuzzle {
 	//	void	show() const;
 		void	solve();
 
-	private:
+		int	size;
+
+	//private:
 		void	openFile(const std::string &filename);
 		void	appendLine(const std::string &line);
 		Node	*findLeastF(Node *current);
@@ -47,7 +49,6 @@ class NPuzzle {
 		Node *goal;
 		std::list<Node *> openList; // Nodes that have been discovered, but not explored yet
 		std::list<Node *> closedList; // Nodes that have already been explored
-		int	size;
 };
 
 #endif

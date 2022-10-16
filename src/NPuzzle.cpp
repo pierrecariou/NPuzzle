@@ -128,15 +128,16 @@ void	NPuzzle::solve()
 	openList.push_back(start);
 	
 	start->manhattanDistance();
-	while ((current = findLeastF(current)) && current->h != 0 && !openList.empty())
+	while (!openList.empty() && (current = findLeastF(current)) && current->h != 0)
 	{
 		current->show();
 		openList.remove(current); // OPEN: States to be examined and candidates to expansion
 		closedList.push_back(current); // CLOSED: States already selected by the algorithm, compared to the solution, and expanded 
 		//std::list<Node *> nextNodes = fromCurrent(*current);
 		openList.splice(openList.begin(), fromCurrent(*current, openList, closedList));
-
-
+		
+		std::cout << "open size: " << openList.size() <<  std::endl;
+		std::cout << "close size: " << closedList.size() <<  std::endl;
 /*
 		for (Node *next : nextNodes) {
 			if (next->exists(closedList))
@@ -153,12 +154,13 @@ void	NPuzzle::solve()
 		*/
 	//	openList.splice(openList.begin(), nextNodes);
 	}
+	closedList.push_back(current);
 	current->show();
 }
 
 Node	*NPuzzle::findLeastF(Node *current)
 {
-	Node *found;
+	Node *found = nullptr;
 	std::list<Node *>::iterator first;
 
 	if (current == nullptr)
@@ -203,7 +205,7 @@ std::list<Node *>	NPuzzle::fromCurrent(const Node &current, const std::list<Node
 	Node *oldNext;
 
 	if ((next = current.up()) && !next->exists(closedList)) {
-		if (oldNext = next->exists(closedList, 1)) {
+		if (oldNext = next->exists(openList, 1)) {
 			oldNext->g = next->g;
 			oldNext->f = next->f;
 		}
@@ -213,7 +215,7 @@ std::list<Node *>	NPuzzle::fromCurrent(const Node &current, const std::list<Node
 		}
 	}
 	if ((next = current.down()) && !next->exists(closedList)) {
-		if (oldNext = next->exists(closedList, 1)) {
+		if (oldNext = next->exists(openList, 1)) {
 			oldNext->g = next->g;
 			oldNext->f = next->f;
 		}
@@ -224,7 +226,7 @@ std::list<Node *>	NPuzzle::fromCurrent(const Node &current, const std::list<Node
 
 	}
 	if ((next = current.left()) && !next->exists(closedList)) {
-		if (oldNext = next->exists(closedList, 1)) {
+		if (oldNext = next->exists(openList, 1)) {
 			oldNext->g = next->g;
 			oldNext->f = next->f;
 		}
@@ -235,7 +237,7 @@ std::list<Node *>	NPuzzle::fromCurrent(const Node &current, const std::list<Node
 
 	}
 	if ((next = current.right()) && !next->exists(closedList)) {
-		if (oldNext = next->exists(closedList, 1)) {
+		if (oldNext = next->exists(openList, 1)) {
 			oldNext->g = next->g;
 			oldNext->f = next->f;
 		}
